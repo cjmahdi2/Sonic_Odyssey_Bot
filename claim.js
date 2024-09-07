@@ -121,7 +121,7 @@ async function openMysteryBox(token, keypair, retries = 3) {
   }
 }
 
-async function processPrivateKey(privateKey) {
+async function processPrivateKey(privateKey, method) {
   try {
     const publicKey = getKeypair(privateKey).publicKey.toBase58();
     const token = await getToken(privateKey);
@@ -139,10 +139,6 @@ async function processPrivateKey(privateKey) {
       console.log(`Available Box(es): ${availableBoxes}`.green);
       console.log('');
 
-      const method = readlineSync.question(
-        'Select input method (1 for claim box, 2 for open box, 3 for daily login): '
-      );
-
       if (method === '1') {
         console.log(`[ ${moment().format('HH:mm:ss')} ] Please wait...`.yellow);
         await dailyClaim(token);
@@ -150,41 +146,27 @@ async function processPrivateKey(privateKey) {
           `[ ${moment().format('HH:mm:ss')} ] All tasks completed!`.cyan
         );
       } else if (method === '2') {
-        let totalClaim;
-        do {
-          totalClaim = readlineSync.question(
-            `How many boxes do you want to open? (Maximum is: ${availableBoxes}): `
-              .blue
+        console.log(
+          `[ ${moment().format('HH:mm:ss')} ] Please wait...`.yellow
+        );
+        for (let i = 0; i < availableBoxes; i++) {
+          const openedBox = await openMysteryBox(
+            token,
+            getKeypair(privateKey)
           );
-
-          if (totalClaim > availableBoxes) {
-            console.log(`You cannot open more boxes than available`.red);
-          } else if (isNaN(totalClaim)) {
-            console.log(`Please enter a valid number`.red);
-          } else {
+          if (openedBox.data.success) {
             console.log(
-              `[ ${moment().format('HH:mm:ss')} ] Please wait...`.yellow
-            );
-            for (let i = 0; i < totalClaim; i++) {
-              const openedBox = await openMysteryBox(
-                token,
-                getKeypair(privateKey)
-              );
-              if (openedBox.data.success) {
-                console.log(
-                  `[ ${moment().format(
-                    'HH:mm:ss'
-                  )} ] Box opened successfully! Status: ${
-                    openedBox.status
-                  } | Amount: ${openedBox.data.amount}`.green
-                );
-              }
-            }
-            console.log(
-              `[ ${moment().format('HH:mm:ss')} ] All tasks completed!`.cyan
+              `[ ${moment().format(
+                'HH:mm:ss'
+              )} ] Box opened successfully! Status: ${
+                openedBox.status
+              } | Amount: ${openedBox.data.amount}`.green
             );
           }
-        } while (totalClaim > availableBoxes);
+        }
+        console.log(
+          `[ ${moment().format('HH:mm:ss')} ] All tasks completed!`.cyan
+        );
       } else if (method === '3') {
         console.log(`[ ${moment().format('HH:mm:ss')} ] Please wait...`.yellow);
         const claimLogin = await dailyLogin(token, getKeypair(privateKey));
@@ -215,158 +197,21 @@ async function processPrivateKey(privateKey) {
   console.log('');
 }
 
-async function fetchDaily(token) {
-  try {
-    const { data } = await axios({
-      url: 'https://odyssey-api-beta.sonic.game/user/transactions/state/daily',
-      method: 'GET',
-      headers: { ...HEADERS, Authorization: token },
-    });
-
-    return data.data.total_transactions;
-  } catch (error) {
-    console.log(
-      `[ ${moment().format('HH:mm:ss')} ] Error in daily fetching: ${
-        error.response.data.message
-      }`.red
-    );
-  }
-}
-
-async function dailyClaim(token) {
-  let counter = 1;
-  const maxCounter = 3;
-
-  try {
-    const fetchDailyResponse = await fetchDaily(token);
-
-    console.log(
-      `[ ${moment().format(
-        'HH:mm:ss'
-      )} ] Your total transactions: ${fetchDailyResponse}`.blue
-    );
-
-    if (fetchDailyResponse > 10) {
-      while (counter <= maxCounter) {
-        try {
-          const { data } = await axios({
-            url: 'https://odyssey-api.sonic.game/user/transactions/rewards/claim',
-            method: 'POST',
-            headers: { ...HEADERS, Authorization: token },
-            data: {
-              stage: counter,
-            },
-          });
-
-          console.log(
-            `[ ${moment().format(
-              'HH:mm:ss'
-            )} ] Daily claim for stage ${counter} has been successful! Stage: ${counter} | Status: ${
-              data.data.claimed
-            }`.green
-          );
-
-          counter++;
-        } catch (error) {
-          if (error.response.data.message === 'interact task not finished') {
-            console.log(
-              `[ ${moment().format(
-                'HH:mm:ss'
-              )} ] Error claiming for stage ${counter}: ${
-                error.response.data.message
-              }`.red
-            );
-            counter++;
-          } else if (
-            error.response &&
-            (error.response.data.code === 100015 ||
-              error.response.data.code === 100016)
-          ) {
-            console.log(
-              `[ ${moment().format(
-                'HH:mm:ss'
-              )} ] Already claimed for stage ${counter}, proceeding to the next stage...`
-                .cyan
-            );
-            counter++;
-          } else {
-            console.log(
-              `[ ${moment().format('HH:mm:ss')} ] Error claiming: ${
-                error.response.data.message
-              }`.red
-            );
-          }
-        } finally {
-          await delay(1000);
-        }
-      }
-
-      console.log(`All stages processed or max stage reached.`.green);
-    } else {
-      throw new Error('Not enough transactions to claim rewards.');
-    }
-  } catch (error) {
-    console.log(
-      `[ ${moment().format('HH:mm:ss')} ] Error in daily claim: ${
-        error.message
-      }`.red
-    );
-  }
-}
-
-async function dailyLogin(token, keypair, retries = 3) {
-  try {
-    const { data } = await axios({
-      url: 'https://odyssey-api-beta.sonic.game/user/check-in/transaction',
-      method: 'GET',
-      headers: { ...HEADERS, Authorization: token },
-    });
-
-    const txBuffer = Buffer.from(data.data.hash, 'base64');
-    const tx = solana.Transaction.from(txBuffer);
-    tx.partialSign(keypair);
-    const signature = await doTransactions(tx, keypair);
-
-    const response = await axios({
-      url: 'https://odyssey-api-beta.sonic.game/user/check-in',
-      method: 'POST',
-      headers: { ...HEADERS, Authorization: token },
-      data: {
-        hash: signature,
-      },
-    });
-
-    return response.data;
-  } catch (error) {
-    if (error.response.data.message === 'current account already checked in') {
-      console.log(
-        `[ ${moment().format('HH:mm:ss')} ] Error in daily login: ${
-          error.response.data.message
-        }`.red
-      );
-    } else {
-      console.log(
-        `[ ${moment().format('HH:mm:ss')} ] Error claiming: ${
-          error.response.data.message
-        }`.red
-      );
-    }
-  }
-}
-
 (async () => {
   try {
     displayHeader();
+
+    // پرسش روش انتخاب فقط یک بار انجام می‌شود
+    const method = readlineSync.question(
+      'Select input method (1 for claim box, 2 for open box, 3 for daily login): '
+    );
+
+    // پردازش تمام کلیدهای خصوصی به صورت خودکار
     for (let i = 0; i < PRIVATE_KEYS.length; i++) {
       const privateKey = PRIVATE_KEYS[i];
-      await processPrivateKey(privateKey);
-      if (i < PRIVATE_KEYS.length - 1) {
-        const continueNext = readlineSync.keyInYNStrict(
-          `Do you want to process next private key?`
-        );
-        if (!continueNext) break;
-      }
+      await processPrivateKey(privateKey, method);
     }
+
     console.log('All private keys processed.'.cyan);
   } catch (error) {
     console.log(`Error in bot operation: ${error}`.red);
