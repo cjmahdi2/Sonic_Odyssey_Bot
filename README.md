@@ -106,11 +106,11 @@ Then take Ctrl + A then D to leave the Screen
 ## Tip:
 If you want to set up your Bot to run every day at 2:00 AM server time:
 
-1.Edit the Cron File:
+1. Edit the Cron File:
 ```
 crontab -e
 ```
-Add the following line to the crontab file:
+2. Add the following line to the crontab file:
 ```
 0 2 * * * cd /root/Sonic_Odyssey_Bot && node index.js && node claim.js
 ```
