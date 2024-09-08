@@ -40,16 +40,8 @@ Sonic Odyssey Bot is an application designed for interacting with the Sonic Odys
 
 4. Prepare input files:
 
-   - Create `accounts.json` with an array of seed phrases.
    - Create `privateKeys.json` with an array of private keys (base58 encoded).
 
-   Example `accounts.json`:
-   ```json
-   [
-     "seed_phrase_1",
-     "seed_phrase_2"
-   ]
-   ```
 
    Example `privateKeys.json`:
    ```json
@@ -73,24 +65,12 @@ or
 npm run claim
 ```
 
-Follow the prompts to:
-
-1. Select the input method (0 for seed phrase, 1 for private key).
-2. Specify the number of random addresses to generate.
-3. Enter the amount of SOL to send in each transaction.
-4. Enter the delay between each transaction in milliseconds (default is 1000ms).
-5. Choose an operation:
-   - 1: Claim Box
-   - 2: Open Box
-   - 3: Daily Login
 
 ## Donations
 
 If you would like to support the development of this project, you can make a donation using the following addresses:
 
-- **Solana**: `GLQMG8j23ookY8Af1uLUg4CQzuQYhXcx56rkpZkyiJvP`
-- **EVM**: `0x960EDa0D16f4D70df60629117ad6e5F1E13B8F44`
-- **BTC**: `bc1p9za9ctgwwvc7amdng8gvrjpwhnhnwaxzj3nfv07szqwrsrudfh6qvvxrj8`
+- **EVM**: `0x83F129E662B21cF035bc9510f65eb29C75b69155`
 
 ## Contributing
 
