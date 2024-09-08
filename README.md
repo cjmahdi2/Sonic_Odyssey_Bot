@@ -40,7 +40,7 @@ Sonic Odyssey Bot is an application designed for interacting with the Sonic Odys
 
 4. Prepare input files:
 
-   - Create `privateKeys.json` with an array of private keys (base58 encoded).
+   - Create `nano privateKeys.json` with an array of private keys (base58 encoded).
 
 
    Example `privateKeys.json`:
