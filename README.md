@@ -59,7 +59,7 @@ npm install node-schedule colors @solana/web3.js axios tweetnacl bs58 moment
 2. Navigate into the project directory:
 
    ```bash
-   cd sonic-odyssey-bot
+   cd Sonic_Odyssey_Bot
    ```
 
 3. Install dependencies:
