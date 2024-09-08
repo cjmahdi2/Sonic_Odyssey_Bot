@@ -85,18 +85,6 @@ npm install node-schedule colors @solana/web3.js axios tweetnacl bs58 moment
    ```
 After completing the privateKeys.json file, press Ctrl + x and then control + y and then Enter to save.
 
-## Tip (Auto):
-If you want to set up your Bot to run every day at 2:00 AM server time:
-
-1. Edit the Cron File:
-```
-crontab -e
-```
-2. Add the following line to the crontab file:
-```
-0 2 * * * cd /root/Sonic_Odyssey_Bot && node index.js && node claim.js
-```
-
 ## Usage (Manual):
 
 **Creating a Screen:**
@@ -115,6 +103,18 @@ For "Daily Check" and "Climb Box" and "Open box":
 npm run claim
 ```
 Then take Ctrl + A then D to leave the Screen
+
+## Tip (Auto):
+If you want to set up your Bot to run every day at 2:00 AM server time:
+
+1. Edit the Cron File:
+```
+crontab -e
+```
+2. Add the following line to the crontab file:
+```
+0 2 * * * cd /root/Sonic_Odyssey_Bot && node index.js && node claim.js
+```
 
 ## Donations
 
