@@ -97,7 +97,7 @@ For "Daily Check" and "Climb Box" and "Open box":
 ```bash
 npm run claim
 ```
-Then take control + A then D to leave the Screen
+Then take Ctrl + A then D to leave the Screen
 
 ## Donations
 
