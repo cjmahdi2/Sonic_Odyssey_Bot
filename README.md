@@ -13,15 +13,43 @@ Sonic Odyssey Bot is an application designed for interacting with the Sonic Odys
 
 ## Prerequisites
 
-- Node.js installed on your machine
-- `npm` or `yarn` package manager
+How many solona Wallets should you make, preferably with a backpack wallet...
+ 
+**Site link:**
 
-## Installation
+https://odyssey.sonic.game/?join=PDfJoX
+
+Log in to the site And Get faucet for them here:
+
+https://faucet.sonic.game/#/
+
+**1. Install Node.js And npm:**
+```
+sudo apt update && apt upgrade -y
+sudo apt install -y nodejs npm
+```
+**1.2 Install Git**
+```
+sudo apt update
+sudo apt install git
+```
+**1.3 Install Screen**
+```
+sudo apt update
+sudo apt install screen
+```
+**Check the installation:**
+```
+node -v
+npm -v
+```
+
+## Installation Script:
 
 1. Clone the repository:
 
    ```bash
-   git clone https://github.com/dante4rt/sonic-odyssey-bot.git
+   git clone https://github.com/cjmahdi2/sonic-odyssey-bot.git
    ```
 
 2. Navigate into the project directory:
