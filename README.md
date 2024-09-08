@@ -28,22 +28,37 @@ https://faucet.sonic.game/#/
 sudo apt update && apt upgrade -y
 sudo apt install -y nodejs npm
 ```
-**1.2 Install Git**
+**2. Install Git**
 ```
 sudo apt update
 sudo apt install git
 ```
-**1.3 Install Screen**
+**3. Install Screen**
 ```
 sudo apt update
 sudo apt install screen
 ```
-**Check the installation:**
+**4.Check the installation:**
 ```
 node -v
 npm -v
 ```
-
+**5.Install dependencies:**
+```
+npm install @solana/web3.js
+```
+```
+npm install dotenv
+```
+```
+npm install bs58
+```
+```
+npm install axios
+```
+```
+npm install node-schedule
+```
 ## Installation Script:
 
 1. Clone the repository:
