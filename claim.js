@@ -286,69 +286,73 @@ async function processPrivateKey(privateKey, method) {
           );
           break;
         case '2':
-          console.log(`[ ${moment().format('HH:mm:ss')} ] Please wait...`.yellow);
-          const totalClaim = availableBoxes;  // ????? ????????? ?? ???? ??? ????
-          for (let i = 0; i < totalClaim; i++) {
-            const openedBox = await openMysteryBox(token, getKeypair(privateKey));
-            if (openedBox.data.success) {
-              console.log(
-                `[ ${moment().format(
-                  'HH:mm:ss'
-                )} ] Box opened successfully! Status: ${
-                  openedBox.status
-                } | Amount: ${openedBox.data.amount}`.green
-              );
-            }
-          }
           console.log(
-            `[ ${moment().format('HH:mm:ss')} ] All tasks completed!`.cyan
+            `[ ${moment().format(
+              'HH:mm:ss'
+            )} ] We are proceeding with your daily login!`.yellow
           );
+          await dailyLogin(token, getKeypair(privateKey));
           break;
         case '3':
-          console.log(`[ ${moment().format('HH:mm:ss')} ] Please wait...`.yellow);
-          const claimLogin = await dailyLogin(token, getKeypair(privateKey));
-          if (claimLogin) {
-            console.log(
-              `[ ${moment().format(
-                'HH:mm:ss'
-              )} ] Daily login has been success! Status: ${
-                claimLogin.status
-              } | Accumulative Days: ${claimLogin.data.accumulative_days}`.green
-            );
-          }
-          console.log(
-            `[ ${moment().format('HH:mm:ss')} ] All tasks completed!`.cyan
-          );
+          await openMysteryBox(token, getKeypair(privateKey));
           break;
         default:
-          throw new Error('Invalid input method selected'.red);
+          console.log('Invalid method!'.red);
       }
     } else {
-      console.log(
-        `There might be errors if you don't have sufficient balance or the RPC is down. Please ensure your balance is sufficient and your connection is stable`
-          .red
-      );
+      console.log(`No balance found for ${publicKey}`.yellow);
     }
   } catch (error) {
-    console.log(`Error processing private key: ${error}`.red);
+    throw new Error(`Error in processing private key: ${error.message}`);
   }
-  console.log('');
 }
 
 (async () => {
   try {
     displayHeader();
-    const methods = ['3', '1', '2']; // ????? ????????: ???? ??????? ????? ??????? ??? ???? ???????
+    const methods = ['3', '1', '2']; // لیستی از متدها
+
+    const failedKeys = []; // لیستی برای ثبت کلیدهای خصوصی که با شکست مواجه شدند
 
     for (let i = 0; i < PRIVATE_KEYS.length; i++) {
       const privateKey = PRIVATE_KEYS[i];
+      let attempts = 0;  // تعداد تلاش‌ها
+      const maxAttempts = 3;  // تعداد تلاش‌های مجاز
 
-      for (const method of methods) {
-        await processPrivateKey(privateKey, method);
+      while (attempts < maxAttempts) {
+        try {
+          console.log(`Processing private key ${i + 1}, attempt ${attempts + 1}`.yellow);
+
+          // برای هر کلید خصوصی، تمامی متدها را اجرا کنید
+          for (const method of methods) {
+            await processPrivateKey(privateKey, method);
+          }
+
+          // اگر عملیات موفق بود، حلقه را ترک کنید
+          break;
+
+        } catch (error) {
+          attempts++;
+          console.log(`Error processing private key ${i + 1}: ${error}`.red);
+
+          if (attempts >= maxAttempts) {
+            console.log(`Failed after ${maxAttempts} attempts for key ${i + 1}.`.red);
+            failedKeys.push({ index: i + 1, privateKey });
+          } else {
+            console.log(`Retrying for private key ${i + 1} (Attempt ${attempts + 1})...`.yellow);
+          }
+        }
       }
     }
 
     console.log('All private keys processed.'.cyan);
+
+    if (failedKeys.length > 0) {
+      console.log(`Failed to process the following private keys after ${maxAttempts} attempts:`.red);
+      failedKeys.forEach((keyInfo) => {
+        console.log(`- Key ${keyInfo.index}`.yellow);
+      });
+    }
   } catch (error) {
     console.log(`Error in bot operation: ${error}`.red);
   } finally {
