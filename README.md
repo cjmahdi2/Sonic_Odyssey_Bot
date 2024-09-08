@@ -53,7 +53,7 @@ npm install node-schedule colors @solana/web3.js axios tweetnacl bs58 moment
 1. Clone the repository:
 
    ```bash
-   git clone https://github.com/cjmahdi2/sonic-odyssey-bot.git
+   git clone https://github.com/cjmahdi2/Sonic_Odyssey_Bot.git
    ```
 
 2. Navigate into the project directory:
