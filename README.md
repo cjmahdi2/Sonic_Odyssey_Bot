@@ -4,7 +4,7 @@ Sonic Odyssey Bot is an application designed for interacting with the Sonic Odys
 
 ## Features
 
-- **Transaction Sending**: Sends SOL transactions from multiple accounts to random addresses.
+- **Transaction Sending**: Sends SOL transactions from multiple accounts to the same addresses but randomly.
 - **Claim Box**: Automates the process of claiming rewards boxes.
 - **Open Box**: Automates the process of opening mystery boxes.
 - **Daily Login**: Automates the daily login process.
