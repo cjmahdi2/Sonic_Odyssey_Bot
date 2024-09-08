@@ -112,7 +112,7 @@ crontab -e
 ```
 Add the following line to the crontab file:
 ```
-0 2 * * * cd /root/Sonic_Odyssey_Bot && (screen -list | grep -q Sonic_Bot || screen -dmS Sonic_Bot bash -c 'node index.js && node claim.js')
+0 2 * * * cd /root/Sonic_Odyssey_Bot && node index.js && node claim.js
 ```
 ## Donations
 
