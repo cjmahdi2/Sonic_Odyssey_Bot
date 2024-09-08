@@ -84,12 +84,12 @@ npm -v
 
 Run the bot using Node.js:
 
+For 100 transactions:
 ```bash
 npm start
 ```
 
-or
-
+For "Daily Check" and "Climb Box" and "Open box":
 ```bash
 npm run claim
 ```
