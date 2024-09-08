@@ -5,7 +5,7 @@ function displayHeader() {
   console.log('========================================'.cyan);
   console.log('=           Sonic Odyssey BOT          ='.cyan);
   console.log('=           Created by CJMahdi         ='.cyan);
-  console.log('=    https://t.me/cjmahdi              ='.cyan);
+  console.log('=          https://t.me/cjmahdi        ='.cyan);
   console.log('========================================'.cyan);
   console.log();
 }
