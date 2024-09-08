@@ -4,14 +4,12 @@ Sonic Odyssey Bot is an application designed for interacting with the Sonic Odys
 
 ## Features
 
-- **Transaction Sending**: Sends SOL transactions from multiple accounts to random addresses.
+- **Transaction Sending**: Sends SOL transactions from multiple accounts to the same addresses but randomly.
+- **Daily Login**: Automates the daily login process.
 - **Claim Box**: Automates the process of claiming rewards boxes.
 - **Open Box**: Automates the process of opening mystery boxes.
-- **Daily Login**: Automates the daily login process.
-- **Input Methods**: Supports input via seed phrases or private keys.
-- **Random Address Generation**: Generates a specified number of random addresses for sending transactions.
-- **Adjustable Amount of SOL**: Allows users to specify the amount of SOL to send in each transaction.
-- **Transaction Delay**: Allows users to specify a delay between each transaction.
+- **Input Methods**: Supports input private keys.
+- **performance**: First, it performs 100 transactions for each wallet (so that the robot cannot be identified in any way) and then > Daily Login > Claim Box > Open Box
 
 ## Prerequisites
 
