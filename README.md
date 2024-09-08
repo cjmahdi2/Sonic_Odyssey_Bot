@@ -103,6 +103,16 @@ npm run claim
 ```
 Then take Ctrl + A then D to leave the Screen
 
+## Tip:
+If you want to set up your Bot to run every day at 2:00 AM server time:
+1.Edit the Cron File:
+```
+crontab -e
+```
+Add the following line to the crontab file:
+```
+0 2 * * * cd /root/Sonic_Odyssey_Bot && screen -dmS Sonic_Bot bash -c 'node index.js && node claim.js'
+```
 ## Donations
 
 If you would like to support the development of this project, you can make a donation using the following addresses:
