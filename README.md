@@ -82,9 +82,9 @@ npm -v
 After completing the privateKeys.json file, press control + x and then control + y and then Enter to save.
 ## Usage
 
-**Creating a Screen**
+**Creating a Screen:**
 ```
-screen -S sonicdm
+screen -S Sonic_Bot
 ```
 Run the bot using Node.js:
 
@@ -97,7 +97,7 @@ For "Daily Check" and "Climb Box" and "Open box":
 ```bash
 npm run claim
 ```
-
+Then take control + A then D to leave the Screen
 
 ## Donations
 
