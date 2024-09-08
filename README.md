@@ -47,7 +47,8 @@ Sonic Odyssey Bot is an application designed for interacting with the Sonic Odys
    ```json
    [
      "base58_private_key_1",
-     "base58_private_key_2"
+     "base58_private_key_2",
+     "base58_private_key_3"
    ]
    ```
 
