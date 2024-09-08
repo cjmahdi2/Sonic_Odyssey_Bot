@@ -45,20 +45,9 @@ npm -v
 ```
 **5.Install dependencies:**
 ```
-npm install @solana/web3.js
+npm install node-schedule colors @solana/web3.js axios tweetnacl bs58 moment
 ```
-```
-npm install dotenv
-```
-```
-npm install bs58
-```
-```
-npm install axios
-```
-```
-npm install node-schedule
-```
+
 ## Installation Script:
 
 1. Clone the repository:
