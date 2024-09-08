@@ -79,9 +79,13 @@ npm -v
      "base58_private_key_3"
    ]
    ```
-
+After completing the privateKeys.json file, press control + x and then control + y and then Enter to save.
 ## Usage
 
+**Creating a Screen**
+```
+screen -S sonicdm
+```
 Run the bot using Node.js:
 
 For 100 transactions:
