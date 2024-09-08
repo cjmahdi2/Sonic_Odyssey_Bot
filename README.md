@@ -105,9 +105,6 @@ If you would like to support the development of this project, you can make a don
 
 - **EVM**: `0x83F129E662B21cF035bc9510f65eb29C75b69155`
 
-## Contributing
-
-Contributions are welcome! Feel free to open issues or pull requests for any improvements or fixes.
 
 ## License
 
