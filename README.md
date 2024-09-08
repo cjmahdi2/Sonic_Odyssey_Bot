@@ -83,7 +83,7 @@ npm install node-schedule colors @solana/web3.js axios tweetnacl bs58 moment
      "base58_private_key_3"
    ]
    ```
-After completing the privateKeys.json file, press control + x and then control + y and then Enter to save.
+After completing the privateKeys.json file, press Ctrl + x and then control + y and then Enter to save.
 ## Usage
 
 **Creating a Screen:**
