@@ -7,6 +7,7 @@ const nacl = require('tweetnacl');
 const { connection, delay } = require('./src/solanaUtils');
 const { HEADERS } = require('./src/headers');
 const { displayHeader } = require('./src/displayUtils');
+const readlineSync = require('readline-sync');
 const moment = require('moment');
 
 const PRIVATE_KEYS = JSON.parse(fs.readFileSync('privateKeys.json', 'utf-8'));
@@ -120,7 +121,7 @@ async function openMysteryBox(token, keypair, retries = 3) {
   }
 }
 
-async function dailyClaim(token) {
+async function dailyClaim(token, retries = 3) {
   let counter = 1;
   const maxCounter = 3;
 
@@ -193,11 +194,17 @@ async function dailyClaim(token) {
       throw new Error('Not enough transactions to claim rewards.');
     }
   } catch (error) {
-    console.log(
-      `[ ${moment().format('HH:mm:ss')} ] Error in daily claim: ${
-        error.message
-      }`.red
-    );
+    if (retries > 0) {
+      console.log(`Retrying daily claim... (${retries} retries left)`.yellow);
+      await new Promise((res) => setTimeout(res, 1000));
+      return dailyClaim(token, retries - 1);
+    } else {
+      console.log(
+        `[ ${moment().format('HH:mm:ss')} ] Error in daily claim: ${
+          error.message
+        }`.red
+      );
+    }
   }
 }
 
@@ -231,6 +238,10 @@ async function dailyLogin(token, keypair, retries = 3) {
           error.response.data.message
         }`.red
       );
+    } else if (retries > 0) {
+      console.log(`Retrying daily login... (${retries} retries left)`.yellow);
+      await new Promise((res) => setTimeout(res, 1000));
+      return dailyLogin(token, keypair, retries - 1);
     } else {
       console.log(
         `[ ${moment().format('HH:mm:ss')} ] Error claiming: ${
@@ -259,7 +270,7 @@ async function fetchDaily(token) {
   }
 }
 
-async function processPrivateKey(privateKey, method) {
+async function processPrivateKey(privateKey, method, retries = 3) {
   try {
     const publicKey = getKeypair(privateKey).publicKey.toBase58();
     const token = await getToken(privateKey);
@@ -289,15 +300,19 @@ async function processPrivateKey(privateKey, method) {
           console.log(`[ ${moment().format('HH:mm:ss')} ] Please wait...`.yellow);
           const totalClaim = availableBoxes;
           for (let i = 0; i < totalClaim; i++) {
-            const openedBox = await openMysteryBox(token, getKeypair(privateKey));
-            if (openedBox.data.success) {
-              console.log(
-                `[ ${moment().format(
-                  'HH:mm:ss'
-                )} ] Box opened successfully! Status: ${
-                  openedBox.status
-                } | Amount: ${openedBox.data.amount}`.green
-              );
+            try {
+              const openedBox = await openMysteryBox(token, getKeypair(privateKey));
+              if (openedBox.data.success) {
+                console.log(
+                  `[ ${moment().format(
+                    'HH:mm:ss'
+                  )} ] Box opened successfully! Status: ${
+                    openedBox.status
+                  } | Amount: ${openedBox.data.amount}`.green
+                );
+              }
+            } catch (error) {
+              console.log(`Error opening box: ${error}`.red);
             }
           }
           console.log(
@@ -331,6 +346,11 @@ async function processPrivateKey(privateKey, method) {
     }
   } catch (error) {
     console.log(`Error processing private key: ${error}`.red);
+    if (retries > 0) {
+      console.log(`Retrying private key processing... (${retries} retries left)`.yellow);
+      await new Promise((res) => setTimeout(res, 1000));
+      return processPrivateKey(privateKey, method, retries - 1);
+    }
   }
   console.log('');
 }
@@ -339,34 +359,30 @@ async function processPrivateKey(privateKey, method) {
   try {
     displayHeader();
 
-    // Step 1: Execute option 3 (daily login) for all private keys
-    console.log('Starting daily login for all private keys...'.cyan);
+    // Process all private keys with method '3' (daily login)
     for (let i = 0; i < PRIVATE_KEYS.length; i++) {
       const privateKey = PRIVATE_KEYS[i];
       await processPrivateKey(privateKey, '3');
     }
-    console.log('Daily login completed for all private keys.'.cyan);
 
-    // Step 2: Execute option 1 (claim box) for all private keys
-    console.log('Starting claim box for all private keys...'.cyan);
+    // Process all private keys with method '1' (claim box)
     for (let i = 0; i < PRIVATE_KEYS.length; i++) {
       const privateKey = PRIVATE_KEYS[i];
       await processPrivateKey(privateKey, '1');
     }
-    console.log('Claim box completed for all private keys.'.cyan);
 
-    // Step 3: Execute option 2 (open box) for all private keys
-    console.log('Starting open box for all private keys...'.cyan);
+    // Process all private keys with method '2' (open box)
     for (let i = 0; i < PRIVATE_KEYS.length; i++) {
       const privateKey = PRIVATE_KEYS[i];
       await processPrivateKey(privateKey, '2');
     }
-    console.log('Open box completed for all private keys.'.cyan);
 
     console.log('All private keys processed.'.cyan);
   } catch (error) {
     console.log(`Error in bot operation: ${error}`.red);
   } finally {
-    console.log('Thanks for having us! Subscribe: https://t.me/HappyCuanAirdrop'.magenta);
+    console.log(
+      'Thanks for having us! Subscribe: https://t.me/HappyCuanAirdrop'.magenta
+    );
   }
 })();
