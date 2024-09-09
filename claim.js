@@ -286,78 +286,87 @@ async function processPrivateKey(privateKey, method) {
           );
           break;
         case '2':
+          console.log(`[ ${moment().format('HH:mm:ss')} ] Please wait...`.yellow);
+          const totalClaim = availableBoxes;
+          for (let i = 0; i < totalClaim; i++) {
+            const openedBox = await openMysteryBox(token, getKeypair(privateKey));
+            if (openedBox.data.success) {
+              console.log(
+                `[ ${moment().format(
+                  'HH:mm:ss'
+                )} ] Box opened successfully! Status: ${
+                  openedBox.status
+                } | Amount: ${openedBox.data.amount}`.green
+              );
+            }
+          }
           console.log(
-            `[ ${moment().format(
-              'HH:mm:ss'
-            )} ] We are proceeding with your daily login!`.yellow
+            `[ ${moment().format('HH:mm:ss')} ] All tasks completed!`.cyan
           );
-          await dailyLogin(token, getKeypair(privateKey));
           break;
         case '3':
-          await openMysteryBox(token, getKeypair(privateKey));
+          console.log(`[ ${moment().format('HH:mm:ss')} ] Please wait...`.yellow);
+          const claimLogin = await dailyLogin(token, getKeypair(privateKey));
+          if (claimLogin) {
+            console.log(
+              `[ ${moment().format(
+                'HH:mm:ss'
+              )} ] Daily login has been success! Status: ${
+                claimLogin.status
+              } | Accumulative Days: ${claimLogin.data.accumulative_days}`.green
+            );
+          }
+          console.log(
+            `[ ${moment().format('HH:mm:ss')} ] All tasks completed!`.cyan
+          );
           break;
         default:
-          console.log('Invalid method!'.red);
+          throw new Error('Invalid input method selected'.red);
       }
     } else {
-      console.log(`No balance found for ${publicKey}`.yellow);
+      console.log(
+        `There might be errors if you don't have sufficient balance or the RPC is down. Please ensure your balance is sufficient and your connection is stable`
+          .red
+      );
     }
   } catch (error) {
-    throw new Error(`Error in processing private key: ${error.message}`);
+    console.log(`Error processing private key: ${error}`.red);
   }
+  console.log('');
 }
 
 (async () => {
   try {
     displayHeader();
-    const methods = ['3', '1', '2']; // لیستی از متدها
 
-    const failedKeys = []; // لیستی برای ثبت کلیدهای خصوصی که با شکست مواجه شدند
-
+    // Step 1: Execute option 3 (daily login) for all private keys
+    console.log('Starting daily login for all private keys...'.cyan);
     for (let i = 0; i < PRIVATE_KEYS.length; i++) {
       const privateKey = PRIVATE_KEYS[i];
-      let attempts = 0;  // تعداد تلاش‌ها
-      const maxAttempts = 3;  // تعداد تلاش‌های مجاز
-
-      while (attempts < maxAttempts) {
-        try {
-          console.log(`Processing private key ${i + 1}, attempt ${attempts + 1}`.yellow);
-
-          // برای هر کلید خصوصی، تمامی متدها را اجرا کنید
-          for (const method of methods) {
-            await processPrivateKey(privateKey, method);
-          }
-
-          // اگر عملیات موفق بود، حلقه را ترک کنید
-          break;
-
-        } catch (error) {
-          attempts++;
-          console.log(`Error processing private key ${i + 1}: ${error}`.red);
-
-          if (attempts >= maxAttempts) {
-            console.log(`Failed after ${maxAttempts} attempts for key ${i + 1}.`.red);
-            failedKeys.push({ index: i + 1, privateKey });
-          } else {
-            console.log(`Retrying for private key ${i + 1} (Attempt ${attempts + 1})...`.yellow);
-          }
-        }
-      }
+      await processPrivateKey(privateKey, '3');
     }
+    console.log('Daily login completed for all private keys.'.cyan);
+
+    // Step 2: Execute option 1 (claim box) for all private keys
+    console.log('Starting claim box for all private keys...'.cyan);
+    for (let i = 0; i < PRIVATE_KEYS.length; i++) {
+      const privateKey = PRIVATE_KEYS[i];
+      await processPrivateKey(privateKey, '1');
+    }
+    console.log('Claim box completed for all private keys.'.cyan);
+
+    // Step 3: Execute option 2 (open box) for all private keys
+    console.log('Starting open box for all private keys...'.cyan);
+    for (let i = 0; i < PRIVATE_KEYS.length; i++) {
+      const privateKey = PRIVATE_KEYS[i];
+      await processPrivateKey(privateKey, '2');
+    }
+    console.log('Open box completed for all private keys.'.cyan);
 
     console.log('All private keys processed.'.cyan);
-
-    if (failedKeys.length > 0) {
-      console.log(`Failed to process the following private keys after ${maxAttempts} attempts:`.red);
-      failedKeys.forEach((keyInfo) => {
-        console.log(`- Key ${keyInfo.index}`.yellow);
-      });
-    }
   } catch (error) {
     console.log(`Error in bot operation: ${error}`.red);
   } finally {
-    console.log(
-      'Thanks for having us! Subscribe: https://t.me/HappyCuanAirdrop'.magenta
-    );
+    console.log('Thanks for having us! Subscribe: https://t.me/HappyCuanAirdrop'.magenta);
   }
 })();
