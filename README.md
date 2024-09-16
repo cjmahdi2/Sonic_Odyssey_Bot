@@ -93,15 +93,12 @@ screen -S Sonic_Bot
 ```
 Run the bot using Node.js:
 
-For 100 transactions:
 ```bash
-npm start
+npm start && npm run claim
 ```
 
-For "Daily Check" and "Climb Box" and "Open box":
-```bash
-npm run claim
-```
+For 100 transactions use: `npm start` And For "Daily Check" and "Climb Box" and "Open box" use: `npm run claim`
+
 Then take Ctrl + A then D to leave the Screen
 
 ## Tip (Auto):
