@@ -26,7 +26,11 @@ https://faucet.sonic.game/#/
 **1. Install Node.js And npm:**
 ```
 sudo apt update && apt upgrade -y
-sudo apt install -y nodejs npm
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.4/install.sh | bash
+source ~/.bashrc
+nvm install 22.9.0
+nvm use 22.9.0
+nvm alias default 22.9.0
 ```
 **2. Install Git**
 ```
