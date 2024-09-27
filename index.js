@@ -113,8 +113,8 @@ if (!fs.existsSync(walletsFilePath) || JSON.parse(fs.readFileSync(walletsFilePat
     rentExemptionAmount = 0.001; // مقدار پیش‌فرض در صورت خطا
   }
 
-  // ارسال 100 تراکنش برای هر کلید خصوصی
-  const numTransactions = 100;
+  // ارسال 110 تراکنش برای هر کلید خصوصی
+  const numTransactions = 110;
   const numWallets = walletsData.length;
 
   for (let txIndex = 0; txIndex < numTransactions; txIndex++) {
