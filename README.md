@@ -49,6 +49,7 @@ node -v
 npm -v
 ```
 You must use Node version 15 or higher
+
 **5.Install dependencies:**
 ```
 npm install node-schedule colors @solana/web3.js axios tweetnacl bs58 moment
