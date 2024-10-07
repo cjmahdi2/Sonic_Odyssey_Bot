@@ -85,9 +85,9 @@ npm install node-schedule colors @solana/web3.js axios tweetnacl bs58 moment
    Example `privateKeys.json`:
    ```json
    [
-     "base58_private_key_1",
-     "base58_private_key_2",
-     "base58_private_key_3"
+     "private_key_1",
+     "private_key_2",
+     "private_key_3"
    ]
    ```
 After completing the privateKeys.json file, press Ctrl + x and then Ctrl + y and then Enter to save.
