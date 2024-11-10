@@ -121,7 +121,7 @@ async function openMysteryBox(token, keypair, retries = 3) {
   }
 }
 
-async function dailyClaim(token, retries = 3) {
+async function dailyClaim(token) {
   let counter = 1;
   const maxCounter = 3;
 
@@ -194,17 +194,11 @@ async function dailyClaim(token, retries = 3) {
       throw new Error('Not enough transactions to claim rewards.');
     }
   } catch (error) {
-    if (retries > 0) {
-      console.log(`Retrying daily claim... (${retries} retries left)`.yellow);
-      await new Promise((res) => setTimeout(res, 1000));
-      return dailyClaim(token, retries - 1);
-    } else {
-      console.log(
-        `[ ${moment().format('HH:mm:ss')} ] Error in daily claim: ${
-          error.message
-        }`.red
-      );
-    }
+    console.log(
+      `[ ${moment().format('HH:mm:ss')} ] Error in daily claim: ${
+        error.message
+      }`.red
+    );
   }
 }
 
@@ -238,10 +232,6 @@ async function dailyLogin(token, keypair, retries = 3) {
           error.response.data.message
         }`.red
       );
-    } else if (retries > 0) {
-      console.log(`Retrying daily login... (${retries} retries left)`.yellow);
-      await new Promise((res) => setTimeout(res, 1000));
-      return dailyLogin(token, keypair, retries - 1);
     } else {
       console.log(
         `[ ${moment().format('HH:mm:ss')} ] Error claiming: ${
@@ -270,7 +260,7 @@ async function fetchDaily(token) {
   }
 }
 
-async function processPrivateKey(privateKey, method, retries = 3) {
+async function processPrivateKey(privateKey, method) {
   try {
     const publicKey = getKeypair(privateKey).publicKey.toBase58();
     const token = await getToken(privateKey);
@@ -298,21 +288,17 @@ async function processPrivateKey(privateKey, method, retries = 3) {
           break;
         case '2':
           console.log(`[ ${moment().format('HH:mm:ss')} ] Please wait...`.yellow);
-          const totalClaim = availableBoxes;
+          const totalClaim = availableBoxes;  // ?? ??? ?????? ?? ????? ???????? ????? ??????? ????
           for (let i = 0; i < totalClaim; i++) {
-            try {
-              const openedBox = await openMysteryBox(token, getKeypair(privateKey));
-              if (openedBox.data.success) {
-                console.log(
-                  `[ ${moment().format(
-                    'HH:mm:ss'
-                  )} ] Box opened successfully! Status: ${
-                    openedBox.status
-                  } | Amount: ${openedBox.data.amount}`.green
-                );
-              }
-            } catch (error) {
-              console.log(`Error opening box: ${error}`.red);
+            const openedBox = await openMysteryBox(token, getKeypair(privateKey));
+            if (openedBox.data.success) {
+              console.log(
+                `[ ${moment().format(
+                  'HH:mm:ss'
+                )} ] Box opened successfully! Status: ${
+                  openedBox.status
+                } | Amount: ${openedBox.data.amount}`.green
+              );
             }
           }
           console.log(
@@ -346,11 +332,6 @@ async function processPrivateKey(privateKey, method, retries = 3) {
     }
   } catch (error) {
     console.log(`Error processing private key: ${error}`.red);
-    if (retries > 0) {
-      console.log(`Retrying private key processing... (${retries} retries left)`.yellow);
-      await new Promise((res) => setTimeout(res, 1000));
-      return processPrivateKey(privateKey, method, retries - 1);
-    }
   }
   console.log('');
 }
@@ -358,23 +339,13 @@ async function processPrivateKey(privateKey, method, retries = 3) {
 (async () => {
   try {
     displayHeader();
+    const method = readlineSync.question(
+      'Select input method (1 for claim box, 2 for open box, 3 for daily login): '
+    );
 
-    // Process all private keys with method '3' (daily login)
     for (let i = 0; i < PRIVATE_KEYS.length; i++) {
       const privateKey = PRIVATE_KEYS[i];
-      await processPrivateKey(privateKey, '3');
-    }
-
-    // Process all private keys with method '1' (claim box)
-    for (let i = 0; i < PRIVATE_KEYS.length; i++) {
-      const privateKey = PRIVATE_KEYS[i];
-      await processPrivateKey(privateKey, '1');
-    }
-
-    // Process all private keys with method '2' (open box)
-    for (let i = 0; i < PRIVATE_KEYS.length; i++) {
-      const privateKey = PRIVATE_KEYS[i];
-      await processPrivateKey(privateKey, '2');
+      await processPrivateKey(privateKey, method);
     }
 
     console.log('All private keys processed.'.cyan);
